@@ -167,40 +167,40 @@ public:
 
 
 int main() {
-    std::locale::global(std::locale(""));
+     locale::global( locale(""));
 
     MyString myStr = "Привет";
-    std::string stdStr = "Привет";
+     string stdStr = "Привет";
 
-    std::cout << "MyString: " << myStr << std::endl;
-    std::cout << "std::string: " << stdStr << std::endl;
-    std::cout << std::endl;
+     cout << "MyString: " << myStr <<  endl;
+     cout << " string: " << stdStr <<  endl;
+     cout <<  endl;
 
-    std::cout << "myStr[0]: " << myStr[0] << std::endl;
-    std::cout << "stdStr[0]: " << stdStr[0] << std::endl;
-    std::cout << std::endl;
+     cout << "myStr[0]: " << myStr[0] <<  endl;
+     cout << "stdStr[0]: " << stdStr[0] <<  endl;
+     cout <<  endl;
 
     if (myStr < MyString("Мир")) {
-        std::cout << "myStr меньше, чем \"Мир\"" << std::endl;
+         cout << "myStr меньше, чем \"Мир\"" <<  endl;
     }
     else {
-        std::cout << "myStr не меньше, чем \"Мир\"" << std::endl;
+         cout << "myStr не меньше, чем \"Мир\"" <<  endl;
     }
 
-    if (stdStr < std::string("Мир")) {
-        std::cout << "stdStr меньше, чем \"Мир\"" << std::endl;
+    if (stdStr <  string("Мир")) {
+         cout << "stdStr меньше, чем \"Мир\"" <<  endl;
     }
     else {
-        std::cout << "stdStr не меньше, чем \"Мир\"" << std::endl;
+         cout << "stdStr не меньше, чем \"Мир\"" <<  endl;
     }
-    std::cout << std::endl;
+     cout <<  endl;
 
     MyString myStr2 = myStr;
-    std::string stdStr2 = stdStr;
+     string stdStr2 = stdStr;
 
-    std::cout << "myStr2 после присваивания: " << myStr2 << std::endl;
-    std::cout << "stdStr2 после присваивания: " << stdStr2 << std::endl;
-    std::cout << std::endl;
+     cout << "myStr2 после присваивания: " << myStr2 <<  endl;
+     cout << "stdStr2 после присваивания: " << stdStr2 <<  endl;
+     cout <<  endl;
 
     myStr.clear();
     myStr.insert(0, "12345");
@@ -208,16 +208,16 @@ int main() {
     stdStr.clear();
     stdStr.insert(0, "12345");
 
-    std::cout << "myStr stoi: " << myStr.stoi() << std::endl;
-    std::cout << "stdStr stoi: " << std::stoi(stdStr) << std::endl;
-    std::cout << std::endl;
+     cout << "myStr stoi: " << myStr.stoi() <<  endl;
+     cout << "stdStr stoi: " <<  stoi(stdStr) <<  endl;
+     cout <<  endl;
 
-    std::cout << "myStr пустая: " << (myStr.empty() ? "да" : "нет") << std::endl;
-    std::cout << "stdStr пустая: " << (stdStr.empty() ? "да" : "нет") << std::endl;
+     cout << "myStr пустая: " << (myStr.empty() ? "да" : "нет") <<  endl;
+     cout << "stdStr пустая: " << (stdStr.empty() ? "да" : "нет") <<  endl;
 
-    std::cout << "Размер myStr: " << myStr.size() << std::endl;
-    std::cout << "Размер stdStr: " << stdStr.size() << std::endl;
-    std::cout << std::endl;
+     cout << "Размер myStr: " << myStr.size() <<  endl;
+     cout << "Размер stdStr: " << stdStr.size() <<  endl;
+     cout <<  endl;
 
     myStr.clear();
     stdStr.clear();
@@ -228,9 +228,9 @@ int main() {
     myStr.push('!');
     stdStr.push_back('!');
 
-    std::cout << "myStr после insert(0, \"Привет\") и функции push(!): " << myStr << std::endl;
-    std::cout << "myStr после insert(0, \"Привет\") и функции push(!): " << stdStr << std::endl;
-    std::cout << std::endl;
+     cout << "myStr после insert(0, \"Привет\") и функции push(!): " << myStr <<  endl;
+     cout << "myStr после insert(0, \"Привет\") и функции push(!): " << stdStr <<  endl;
+     cout <<  endl;
 
     return 0;
 }
