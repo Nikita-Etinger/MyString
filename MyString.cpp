@@ -1,486 +1,236 @@
 ﻿#include <iostream>
-#include <string>
+#include<string>
 using namespace std;
 
 class MyString {
 private:
-    char* arrayStr = nullptr;
-    int lengthSize = 0;
-    int maxSize = 10;
-    int countSymbol(const char array2[]) {
-        int counter = 0;
-        for (int i = 0; array2[i] != '\0'; i++) {
-            counter++;
-        }
-        return counter;
-    }
-
-    int getMinLength(const char str1[], const char str2[]) {
-        int length1 = countSymbol(str1);
-        int length2 = countSymbol(str2);
-        return (length1 < length2) ? length1 : length2;
-    }
+    char* data;
+    int length;
 
 public:
-    MyString() {
-        arrayStr = new char[maxSize + 1]();
-        arrayStr[maxSize] = '\0';
+    MyString(const char* str = "") {
+        length = stringLength(str);
+        data = new char[length + 1];
+        stringCopy(data, str);
     }
 
-    MyString(const char array2[]) : MyString() {
-        int length = countSymbol(array2);
-        if (length > maxSize) {
-            delete[] arrayStr;
-            arrayStr = new char[length + 1];
-            maxSize = length;
-        }
-        lengthSize = length;
-        for (int i = 0; i < length; i++) {
-            arrayStr[i] = array2[i];
-        }
-        arrayStr[length] = '\0';
+    MyString(const MyString& other) {
+        length = other.length;
+        data = new char[length + 1];
+        stringCopy(data, other.data);
     }
 
     ~MyString() {
-        cout << this<<endl;
-        if (arrayStr != nullptr) delete[] arrayStr;
-    }
-
-    char* operator+(const char str[]) {
-        int strLength = countSymbol(str);
-        int newLength = lengthSize + strLength;
-
-        char* newArrayStr = new char[newLength + 1];
-        for (int i = 0; i < lengthSize; i++) {
-            newArrayStr[i] = arrayStr[i];
-        }
-        for (int i = lengthSize, k = 0; i < newLength; i++, k++) {
-            newArrayStr[i] = str[k];
-        }
-        newArrayStr[newLength] = '\0';
-
-
-
-        return newArrayStr;
-    }
-
-    char* operator+(const MyString& other){
-        int strLength = other.lengthSize;
-        int newLength = lengthSize + strLength;
-
-        char* newArrayStr = new char[newLength + 1];
-        for (int i = 0; i < lengthSize; i++) {
-            newArrayStr[i] = arrayStr[i];
-        }
-        for (int i = lengthSize, k = 0; i < newLength; i++, k++) {
-            newArrayStr[i] = other.arrayStr[k];
-        }
-        newArrayStr[newLength] = '\0';
-
-
-        return newArrayStr;
-    }
-
-
-    MyString& operator=(const MyString& other) {
-        if (this != &other) {
-            lengthSize = other.lengthSize;
-            if (lengthSize > maxSize) {
-                delete[] arrayStr;
-                arrayStr = new char[lengthSize];
-                maxSize = lengthSize;
-            }
-            for (int i = 0; i < lengthSize; i++) {
-                arrayStr[i] = other.arrayStr[i];
-            }
-        }
-        return *this;
-    }
-
-
-    MyString& operator=(const char str[]) {
-        lengthSize = countSymbol(str);
-        if (lengthSize > maxSize) {
-            delete[] arrayStr;
-            arrayStr = new char[lengthSize];
-            maxSize = lengthSize;
-        }
-        for (int i = 0; i < lengthSize; i++) {
-            arrayStr[i] = str[i];
-        }
-        arrayStr[lengthSize] = '\0';
-        return *this;
-    }
-    void operator+=(const char array2[]) {
-        int size = countSymbol(array2);
-        int newLength = lengthSize + size;
-        char* newArrayStr = new char[newLength+1]();
-        for (int i = 0; i < lengthSize; i++) {
-            newArrayStr[i] = arrayStr[i];
-        }
-        for (int i = lengthSize, k = 0; i < newLength; i++, k++) {
-            newArrayStr[i] = array2[k];
-        }
-        newArrayStr[newLength] = '\0';
-
-        delete[] arrayStr;
-        arrayStr = newArrayStr;
-        lengthSize = newLength;
-    }
-
-
-
-    void show() {
-        for (int i = 0; i < lengthSize; i++) {
-            cout << arrayStr[i];
-        }
-    }
-
-    int length() {
-        return lengthSize;
+        delete[] data;
     }
 
     char& operator[](int index) {
-        return arrayStr[index];
-    }
-
-    bool operator==(MyString& other) {
-        if (other.length() != lengthSize) return false;
-        for (int i = 0; i < lengthSize; i++) {
-            if (other[i] != arrayStr[i]) return false;
-        }
-        return true;
-    }
-
-    bool operator==(const char other[]) {
-        int sizeOther = countSymbol(other);
-        if (sizeOther != lengthSize) return false;
-        for (int i = 0; i < lengthSize; i++) {
-            if (other[i] != arrayStr[i]) return false;
-        }
-        return true;
+        return data[index];
     }
 
     bool operator<(MyString& other) {
-        int minLength = getMinLength(arrayStr, other.arrayStr);
-        for (int i = 0; i < minLength; i++) {
-            if (arrayStr[i] < other.arrayStr[i]) {
-                return true;
-            }
-            else if (arrayStr[i] > other.arrayStr[i]) {
-                return false;
-            }
-        }
-        return lengthSize < other.lengthSize;
+        return stringCompare(data, other.data) < 0;
     }
 
-    bool operator<(const char other[]) {
-        int minLength = getMinLength(arrayStr, other);
-        for (int i = 0; i < minLength; i++) {
-            if (arrayStr[i] < other[i]) {
-                return true;
-            }
-            else if (arrayStr[i] > other[i]) {
-                return false;
-            }
-        }
-        return lengthSize < countSymbol(other);
+    bool operator==(MyString& other){
+        return stringCompare(data, other.data) == 0;
     }
 
-    bool operator<=(MyString& other) {
-        return (*this == other) || (*this < other);
+    bool empty() const {
+        return (length == 0 ? 1 : 0);
     }
 
-    bool operator>=(MyString& other) {
-        return (*this == other) || (*this > other);
-    }
-
-    bool operator<=(const char other[]) {
-        return (*this == other) || (*this < other);
-    }
-
-    bool operator>=(const char other[]) {
-        return (*this == other) || (*this > other);
-    }
-
-    bool operator>(MyString& other) {
-        return !(*this <= other);
-    }
-
-    bool operator>(const char other[]) {
-        return !(*this <= other);
-    }
-    friend  ostream& operator<<( ostream& os, const MyString& myString) {
-        for (int i = 0; i < myString.lengthSize; i++) {
-            os << myString.arrayStr[i];
-        }
-        return os;
-    }
-    bool empty(){
-        if (lengthSize == 0)return 1;
-        return 0;
-    }
-
-    int size() {
-        return lengthSize;
+    int size() const {
+        return length;
     }
 
     void clear() {
-        
-        lengthSize = 0;
-        /*arrayStr[maxSize] = '\0';*/
+        delete[] data;
+        length = 0;
+        data = new char[1];
+        data[0] = '\0';
     }
 
+    void insert(int pos, const char* str) {
+        int strLength = stringLength(str);
+        char* newData = new char[length + strLength + 1];
 
-    void insert(int index, const char str[]) {
-        int strLength = countSymbol(str);
-        int newLength = lengthSize + strLength;
+        stringCopy(newData, data, pos);
+        stringCopy(newData + pos, str);
+        stringCopy(newData + pos + strLength, data + pos);
 
-        // Проверяем, требуется ли изменение размера
-        if (newLength >= maxSize) {
-            int newMaxSize = max(maxSize * 2, newLength + 1);
-            char* newArrayStr = new char[newMaxSize];
-            for (int i = 0; i < index; i++) {
-                newArrayStr[i] = arrayStr[i];
-            }
-            for (int i = index; i < lengthSize +1; i++) {
-                newArrayStr[i + strLength] = arrayStr[i];
-            }
-            
-            delete[] arrayStr;
-            arrayStr = newArrayStr;
-            maxSize = newMaxSize;
-        }
-        else {
-            // Сдвигаем существующие элементы вправо
-            if (lengthSize != 0) {
-                for (int i = lengthSize; i >= index; i--) {
-                    arrayStr[i + strLength] = arrayStr[i];
-                }
-            }
-        }
-
-        // Вставляем новую строку
-        for (int i = 0; i < strLength; i++) {
-            arrayStr[index + i] = str[i];
-        }
-
-        lengthSize = newLength;
-        maxSize = newLength;
-        arrayStr[newLength+1] = '\0';
+        delete[] data;
+        data = newData;
+        length += strLength;
     }
 
-    void push(const char ch) {
-        if (lengthSize >= maxSize) {
-            char* newArrayStr = new char[maxSize+1];
+    void push(char ch) {
+        char* newData = new char[length + 2];
+        stringCopy(newData, data);
+        newData[length] = ch;
+        newData[length + 1] = '\0';
 
-            for (int i = 0; i < lengthSize+1; i++) {
-                newArrayStr[i] = arrayStr[i];
-            }
-
-            delete[] arrayStr;
-            arrayStr = newArrayStr;
-        }
-
-        arrayStr[lengthSize] = ch;
-        lengthSize++;
-        arrayStr[lengthSize] = '\0';
-        maxSize = lengthSize;
+        delete[] data;
+        data = newData;
+        length++;
     }
 
     void pop() {
-        if (lengthSize > 0) {
-            lengthSize--;
+        if (length > 0) {
+            data[length - 1] = '\0';
+            length--;
         }
     }
-    //специально для стринга 
 
-    bool operator==(string& other) {
-        if (lengthSize != other.size()) {
-            return false;
+    int stoi() const {
+        int result = 0;
+        int sign = 1;
+        int i = 0;
+
+        if (data[0] == '-') {
+            sign = -1;
+            i = 1;
         }
-        for (int i = 0; i < lengthSize; i++) {
-            if (arrayStr[i] != other[i]) {
-                return false;
+
+        while (data[i] != '\0') {
+            if (data[i] >= '0' && data[i] <= '9') {
+                result = result * 10 + (data[i] - '0');
+                i++;
+            }
+            else {
+                break;
             }
         }
-        return true;
+
+        return result * sign;
     }
 
-    bool operator!=( string& other) {
-        return !(*this == other);
+    MyString& operator=(const MyString& other) {
+        if (this != &other) {
+            delete[] data;
+            length = other.length;
+            data = new char[length + 1];
+            stringCopy(data, other.data);
+        }
+        return *this;
     }
 
-    bool operator<(string& other) {
-        //c_str() получение ссылки на массив char объекта string 
-        int minLength = getMinLength(arrayStr, other.c_str());
-        for (int i = 0; i < minLength; i++) {
-            if (arrayStr[i] < other[i]) {
-                return true;
+    friend ostream& operator<<( ostream& os, const MyString& str) {
+        os << str.data;
+        return os;
+    }
+
+    int stringLength(const char* str) {
+        int length = 0;
+        while (str[length] != '\0') {
+            length++;
+        }
+        return length;
+    }
+
+    void stringCopy(char* dest, const char* sour, int start = 0) {
+        int i = 0;
+        while (sour[start + i] != '\0') {
+            dest[i] = sour[start + i];
+            i++;
+        }
+        dest[i] = '\0';
+    }
+
+    int stringCompare(const char* str1, const char* str2) {
+        int i = 0;
+        while (str1[i] != '\0' && str2[i] != '\0') {
+            if (str1[i] < str2[i]) {
+                return -1;
             }
-            else if (arrayStr[i] > other[i]) {
-                return false;
+            else if (str1[i] > str2[i]) {
+                return 1;
             }
-        }
-        return lengthSize < other.size();
-    }
-
-    bool operator<=(string& other) {
-        return (*this == other) || (*this < other);
-    }
-
-    bool operator>(string& other) {
-        return !(*this <= other);
-    }
-
-    bool operator>=(string& other) {
-        return (*this == other) || (*this > other);
-    }
-    int stoi() {
-        int num = 0;
-        int index = 0;
-        int k = 1;
-        if (arrayStr[0] == '-') {
-            k = -1;
-            index = 1;
+            i++;
         }
 
-        for (int i = index; i < lengthSize; i++) {
-            num = num * 10 + arrayStr[i] - '0';
+        if (str1[i] == '\0' && str2[i] == '\0') {
+            return 0;
         }
-        num *= k;
-        return num;
+        else if (str1[i] == '\0') {
+            return -1;
+        }
+        else {
+            return 1;
+        }
     }
-    void showAdress() {
-        cout << this << endl;
+    bool operator<(const MyString& other){
+        return stringCompare(data, other.data) < 0;
     }
-    void deletes() {
-        delete[]arrayStr;
-    }
-
 };
 
+
+
 int main() {
-    setlocale(LC_ALL, "ru");
+    std::locale::global(std::locale(""));
 
-    // Конструкторы и оператор присваивания
-    MyString myStr("Привет");
+    MyString myStr = "Привет";
+    std::string stdStr = "Привет";
 
-     string stdStr("Привет");
+    std::cout << "MyString: " << myStr << std::endl;
+    std::cout << "std::string: " << stdStr << std::endl;
+    std::cout << std::endl;
 
-    // Оператор +=
-    myStr += " Мир!";
-    stdStr += " Мир!";
-    //myStr.deleteAr();//ошибка удаления массива 
+    std::cout << "myStr[0]: " << myStr[0] << std::endl;
+    std::cout << "stdStr[0]: " << stdStr[0] << std::endl;
+    std::cout << std::endl;
 
-    // Оператор +
-    MyString myStrConcat = (myStr + " Добро пожаловать!");
-    string stdStrConcat = stdStr + " Добро пожаловать!";
+    if (myStr < MyString("Мир")) {
+        std::cout << "myStr меньше, чем \"Мир\"" << std::endl;
+    }
+    else {
+        std::cout << "myStr не меньше, чем \"Мир\"" << std::endl;
+    }
 
-    cout << "MyString: " << myStr << endl;
-    cout << "string  : " << stdStr << endl;
-    
+    if (stdStr < std::string("Мир")) {
+        std::cout << "stdStr меньше, чем \"Мир\"" << std::endl;
+    }
+    else {
+        std::cout << "stdStr не меньше, чем \"Мир\"" << std::endl;
+    }
+    std::cout << std::endl;
 
-    
+    MyString myStr2 = myStr;
+    std::string stdStr2 = stdStr;
 
+    std::cout << "myStr2 после присваивания: " << myStr2 << std::endl;
+    std::cout << "stdStr2 после присваивания: " << stdStr2 << std::endl;
+    std::cout << std::endl;
 
     myStr.clear();
-    myStr = "1234";
+    myStr.insert(0, "12345");
+
     stdStr.clear();
-    stdStr = "1234";
-    int myStrInt = myStr.stoi();
-    int stdStrInt =  stoi(stdStr);
-    bool isStoiTestEqual=(myStrInt==stdStrInt?1:0);
-    // Оператор []
+    stdStr.insert(0, "12345");
 
-    
-    myStr.pop();
-    stdStr.pop_back();
+    std::cout << "myStr stoi: " << myStr.stoi() << std::endl;
+    std::cout << "stdStr stoi: " << std::stoi(stdStr) << std::endl;
+    std::cout << std::endl;
 
+    std::cout << "myStr пустая: " << (myStr.empty() ? "да" : "нет") << std::endl;
+    std::cout << "stdStr пустая: " << (stdStr.empty() ? "да" : "нет") << std::endl;
 
+    std::cout << "Размер myStr: " << myStr.size() << std::endl;
+    std::cout << "Размер stdStr: " << stdStr.size() << std::endl;
+    std::cout << std::endl;
 
-    MyString insertMyStr = myStr;
-    string insertStdStr = stdStr;
-    insertMyStr.insert(2, "Boba");
-    insertStdStr.insert(2, "Boba");
-    char myStrChar = insertMyStr[0];
-    char stdStrChar = insertStdStr[0];
-    
+    myStr.clear();
+    stdStr.clear();
 
-    
+    myStr.insert(0, "Привет");
+    stdStr.insert(0, "Привет");
 
-    
-    // Операторы сравнения
+    myStr.push('!');
+    stdStr.push_back('!');
 
-    bool isEqual = (insertMyStr == insertStdStr);
-    bool isNotEqual = (insertMyStr != insertStdStr);
-    bool isGreater = (insertMyStr > insertStdStr);
-    bool isLess = (insertMyStr < insertStdStr);
-    bool isGreaterOrEqual = (insertMyStr >= insertStdStr);
-    bool isLessOrEqual = (insertMyStr <= insertStdStr);
-
-    bool isMyStrEmpty = insertMyStr.empty();
-    bool isStdStrEmpty = insertStdStr.empty();
-    int myStrSize = insertMyStr.size();
-    int stdStrSize = insertStdStr.size();
-    
-    cout << "MyStr";
-    myStr.showAdress();
-    cout << "insertMyStr";
-    insertMyStr.showAdress();
-    cout << "myStrConCat";
-    myStrConcat.showAdress();
-    
-     cout<<"Stoi test  : "<< (isStoiTestEqual?  "Успех" : "Провал") << endl;
-     cout << "MyString после конкатенации: " << myStrConcat <<  endl;
-     cout << "string после конкатенации  : " << stdStrConcat <<  endl;
-     cout << "Сравнение MyString и string:" <<  endl;
-     cout << "   - Оператор ==: " << (isEqual ? "Успех" : "Провал") <<  endl;
-     cout << "   - Оператор !=: " << (isNotEqual ? "Успех" : "Провал") <<  endl;
-     cout << "   - Оператор > : " << (isGreater ? "Успех" : "Провал") <<  endl;
-     cout << "   - Оператор < : " << (isLess ? "Успех" : "Провал") <<  endl;
-     cout << "   - Оператор >=: " << (isGreaterOrEqual ? "Успех" : "Провал") <<  endl;
-     cout << "   - Оператор <=: " << (isLessOrEqual ? "Успех" : "Провал") <<  endl;
-     cout << "MyString после добавления Boba во вторую позицию: " << insertMyStr << endl;
-     cout << "string осле добавления Boba во вторую позицию:  : " << insertStdStr << endl;
-     cout << "Первый символ MyString: " << myStrChar << endl;
-     cout << "Первый символ string  : " << stdStrChar << endl;
-
-     insertMyStr.push('!');
-     insertStdStr.push_back('!');
-     cout << "MyString после добавления в конец !: " << insertMyStr << endl;
-     cout << "string после добавления в конец !  : " << insertStdStr << endl;
-     myStr.clear();
-
-
-     stdStr.clear();
-     
-     cout << "MyString после очистки: " << myStr <<  endl;
-     cout << "string после очистки  : " << stdStr <<  endl;
-     cout << "Длина MyString: " << myStrSize <<  endl;
-     cout << "Длина string  : " << stdStrSize <<  endl;
-     cout << "MyString пустой? " << (isMyStrEmpty ? "Да" : "Нет") <<  endl;
-     cout << "string пустой?   " << (isStdStrEmpty ? "Да" : "Нет") <<  endl;
+    std::cout << "myStr после insert(0, \"Привет\") и функции push(!): " << myStr << std::endl;
+    std::cout << "myStr после insert(0, \"Привет\") и функции push(!): " << stdStr << std::endl;
+    std::cout << std::endl;
 
     return 0;
 }
-//constructor 
-//destructor 
-//constructor copy 
-//operator = 
-//operator != 
-//operator += 
-//operator + 
-//operator > 
-//operator < 
-//operator >= 
-//operator <= 
-//stoi ok
-//operator[] 
-//empty
-//size
-//clear
-//insert
-//push
-//pop
-//
